@@ -1,0 +1,19 @@
+appId: com.arcontrol.devicemaster
+productName: AR Control Device Master Enterprise
+directories:
+  buildResources: build
+files:
+  - out/main/**/*
+  - out/preload/**/*
+  - out/renderer/**/*
+extraResources:
+  - from: resources
+    to: resources
+    filter:
+      - "**/*"
+win:
+  target: nsis
+  icon: resources/icon.ico
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true

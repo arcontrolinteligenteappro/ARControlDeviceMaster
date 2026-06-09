@@ -1,0 +1,11 @@
+import { loadConfig, addDevice } from "./config-manager"
+
+// cargar config
+ipcMain.handle("config:getDevices", () => {
+  return loadConfig().devices
+})
+
+// guardar nuevo dispositivo
+ipcMain.handle("config:addDevice", (_, device) => {
+  return addDevice(device)
+})
