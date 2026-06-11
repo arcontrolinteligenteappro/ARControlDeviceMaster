@@ -1,17 +1,26 @@
 {
   "name": "ar-control-device-master",
   "version": "1.0.0",
+  "description": "Suite corporativa de grado forense para el control maestro, telemetría táctica y automatización de flotas Android.",
+  "author": "ChrisRey91 - www.arcontrolinteligente.com",
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
-    "build": "electron-vite build"
+    "build": "electron-vite build",
+    "package": "electron-builder"
   },
   "dependencies": {
+    "adbkit": "^2.11.1",
+    "framer-motion": "^12.40.0",
+    "i18next": "^26.3.1",
     "node-fetch": "^3.3.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-i18next": "^17.0.8",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^25.9.1",
     "@types/node-fetch": "^2.6.13",
     "@types/react": "^19.2.16",
@@ -19,12 +28,32 @@
     "@vitejs/plugin-react": "^4",
     "autoprefixer": "^10.5.0",
     "electron": "^30",
+    "electron-builder": "^24.13.3",
     "electron-vite": "^2",
+    "express": "^5.2.1",
     "postcss": "^8.5.15",
+    "socket.io": "^4.8.3",
     "tailwindcss": "^3.4.10",
     "typescript": "^5"
   },
   "build": {
+    "appId": "com.arcontrolinteligente.devicemaster",
+    "productName": "AR Control Device Master",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/",
+      "package.json"
+    ],
+    "linux": {
+      "category": "Utility",
+      "icon": "resources/icons"
+    },
+    "win": {
+        "target": "nsis",
+        "icon": "resources/icons/256x256.png"
+    },
     "extraResources": [
       {
         "from": "resources/bin",

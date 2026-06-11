@@ -1,56 +1,35 @@
-import { contextBridge, ipcRenderer } from "electron"
+import { contextBridge, ipcRenderer } from 'electron'
 
-contextBridge.exposeInMainWorld("api", {
-
-  // ✅ DEVICES
-  getDevices: () => ipcRenderer.invoke("devices:get"),
-  addDevice: (device: any) => ipcRenderer.invoke("devices:add", device),
-
-  // ✅ SYSTEM
-  getSystemStatus: () => ipcRenderer.invoke("system:status"),
-
-  // ✅ SCRCPY
-  scrcpyStream: (id: string) =>
-    ipcRenderer.invoke("scrcpy:startStream", id),
-
-  onFrame: (cb: any) =>
-    ipcRenderer.on("scrcpy:frame", (_, data) => cb(data)),
-
-  // ✅ INPUT
-  tap: (data: any) =>
-    ipcRenderer.invoke("input:tap", data),
-
-  swipe: (data: any) =>
-    ipcRenderer.invoke("input:swipe", data),
-
-  // ✅ ADB
-  connectDevice: (ip: string) =>
-    ipcRenderer.invoke("device:connect", ip),
-
-  sendNav: (ip: string, action: string) =>
-    ipcRenderer.invoke("device:nav", { ip, action }),
-
-  openApp: (ip: string, pkg: string) =>
-    ipcRenderer.invoke("device:openApp", { ip, pkg }),
-
-  sendText: (ip: string, text: string) =>
-    ipcRenderer.invoke("device:text", { ip, text }),
-
-  // 🎮 GAME
-  gameStart: (ip: string) =>
-    ipcRenderer.invoke("game:start", ip),
-
-  sendGameKey: (ip: string, key: string) =>
-    ipcRenderer.invoke("game:key", { ip, key }),
-
-  // 🔥 MULTICONTROL
-  multiBroadcast: (ips: string[], cmd: string) =>
-    ipcRenderer.invoke("multi:broadcast", ips, cmd),
-
-  multiStream: (ips: string[], cmd: string) =>
-    ipcRenderer.invoke("multi:stream", ips, cmd),
-
-  multiClose: (ips: string[]) =>
-    ipcRenderer.invoke("multi:close", ips),
-
+contextBridge.exposeInMainWorld('api', {
+  // DOMINIO: SISTEMA Y CONECTIVIDAD
+  sys: {
+    reboot: (deviceId: string, mode: 'normal'|'recovery'|'fastboot'|'download'|'edl') => 
+      ipcRenderer.invoke('sys:reboot', deviceId, mode),
+    getTelemetry: (deviceId: string) => ipcRenderer.invoke('sys:getTelemetry', deviceId)
+  },
+  // DOMINIO: CONTROL Y MIRRORING (Baja Latencia)
+  control: {
+    startScrcpy: (config: any) => ipcRenderer.invoke('control:startScrcpy', config),
+    sendInput: (deviceId: string, inputData: any) => ipcRenderer.invoke('control:sendInput', inputData), // Persistent Shell
+    toggleScreenOff: (deviceId: string) => ipcRenderer.invoke('control:toggleScreenOff', deviceId),
+    setPeripheralConfig: (config: any) => ipcRenderer.invoke('control:setPeripheralConfig', config)
+  },
+  // DOMINIO: APPS Y DEBLOAT
+  apps: {
+    installPackage: (deviceIds: string[], apkPath: string) => ipcRenderer.invoke('apps:installPackage', deviceIds, apkPath),
+    analyzeApp: (deviceId: string, packageName: string) => ipcRenderer.invoke('apps:analyzeApp', deviceId, packageName),
+    runDebloat: (deviceIds: string[], profile: 'google'|'samsung'|'carrier'|'oem') => 
+      ipcRenderer.invoke('apps:runDebloat', deviceIds, profile)
+  },
+  // DOMINIO: FORENSE (Delegado a Workers)
+  forensic: {
+    startSQLiteCarving: (deviceId: string, dbName: string) => ipcRenderer.invoke('forensic:startSQLiteCarving', deviceId, dbName),
+    startFileCarving: (deviceId: string, hexPattern: string) => ipcRenderer.invoke('forensic:startFileCarving', deviceId, hexPattern),
+    analyzeLogcatWithAI: (rawLogs: string) => ipcRenderer.invoke('forensic:analyzeLogcatWithAI', rawLogs)
+  },
+  // DOMINIO: TELECOM
+  telecom: {
+    injectApn: (deviceIds: string[], apnConfig: any) => ipcRenderer.invoke('telecom:injectApn', deviceIds, apnConfig),
+    injectDialerCode: (deviceId: string, code: string) => ipcRenderer.invoke('telecom:injectDialerCode', deviceId, code)
+  }
 })

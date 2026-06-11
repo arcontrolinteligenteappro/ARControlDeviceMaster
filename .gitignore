@@ -3,4 +3,6 @@ out/
 dist/
 release_build/
 .vscode/
-*.log
+*.logrelease/
+dist/
+out/

@@ -1,126 +1,57 @@
-import { useEffect, useState } from "react"
+import React, { useState } from 'react'
+import SplashScreen from './components/SplashScreen'
+import ActiveControlGrid from './components/ActiveControlGrid'
 
-import ManualDeviceForm from "./components/ManualDeviceForm"
-import SystemStatus from "./ 📱 dispositivosimport SystemStatus from "./components/SystemStatus"
-  const [devices, setDevices] = useState<any[]>([])
+export default function App() {
+  const [showSplash, setShowSplash] = useState(true)
+  const [devices, setDevices] = useState([]) // Mock vacío para simular Empty State
 
-  // 🎯 seleccionados (MULTICONTROL)
-  const [selected, setSelected] = useState<string[]>([])
-
-  // ✅ cargar dispositivos
-  useEffect(() => {
-    loadDevices()
-  }, [])
-
-  const loadDevices = async () => {
-    const res = await window.api.getDevices()
-    setDevices(res || [])
-  }
-
-  // ✅ seleccionar/deseleccionar dispositivo
-  const toggle = (ip: string) => {
-    setSelected(prev =>
-      prev.includes(ip)
-        ? prev.filter(x => x !== ip)
-        : [...prev, ip]
-    )
-  }
-
-  // 🎮 KEYBOARD MULTICONTROL
-  useEffect(() => {
-
-    const handler = (e: KeyboardEvent) => {
-
-      if (selected.length === 0) return
-
-      let cmd = ""
-
-      switch (e.key.toLowerCase()) {
-        case "w": cmd = "input tap 500 300"; break
-        case "s": cmd = "input tap 500 700"; break
-        case "a": cmd = "input tap 200 500"; break
-        case "d": cmd = "input tap 800 500"; break
-        case " ": cmd = "input keyevent 62"; break // espacio = botón acción
-      }
-
-      if (cmd) {
-        window.api.multiStream(selected, cmd)
-      }
-
-    }
-
-    window.addEventListener("keydown", handler)
-
-    return () => {
-      window.removeEventListener("keydown", handler)
-    }
-
-  }, [selected])
-
-  // 🔴 limpiar streams al salir
-  useEffect(() => {
-    return () => {
-      if (selected.length > 0) {
-        window.api.multiClose(selected)
-      }
-    }
-  }, [selected])
+  if (showSplash) return <SplashScreen onFinish={() => setShowSplash(false)} />
 
   return (
-    <div className="p-4 text-cyan-400">
+    <div className="w-screen h-screen bg-[#02050A] text-white font-mono p-4 flex flex-col">
+      {devices.length === 0 ? (
+        // --- AR CONTROL DEVICE MASTER // EMPTY STATE INTERFACE ---
+        <div className="flex-1 flex flex-col justify-center items-center relative overflow-hidden">
+          {/* Background: Cyber security command center & animated grid */}
+          <div className="absolute inset-0 opacity-5 bg-[url('assets/command_center.svg')] bg-cover"></div>
+          <div className="absolute inset-0 bg-grid-pattern animate-grid-drift"></div>
 
-      <h1 className="text-xl mb-2">AR Control Device Master</h1>
+          {/* Center of screen: Large holographic AR logo & Animated AI Core */}
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="text-9xl font-black text-cyan-950/40 tracking-tighter mb-4 animate-breathing-glow relative">
+              AR
+              {/* Rotating scanning radar & Circular pulse effect */}
+              <div className="absolute inset-0 rounded-full border-4 border-cyan-500/20 animate-radar-sweep"></div>
+              <div className="absolute inset-0 rounded-full border-2 border-cyan-500/10 animate-ping"></div>
+            </div>
+            
+            {/* Main Message & Sub Message */}
+            <h1 className="text-2xl font-bold text-gray-500 tracking-widest mb-1">NO DEVICES CONNECTED</h1>
+            <p className="text-[10px] text-gray-700 tracking-widest mb-12">Waiting for Android Device // Auto Discovery Enabled</p>
 
-      <SystemStatus />
-
-      <ManualDeviceForm onUpdate={setDevices} />
-
-      {/* 🔥 CONTROLES GLOBALES */}
-      <div className="mt-4 mb-4">
-
-        <button
-          onClick={() => window.api.multiBroadcast(selected, "input keyevent 26")}
-          className="border border-cyan-500 px-4 py-2 mr-2"
-        >
-          🔌 POWER TODOS
-        </button>
-
-        <span className="ml-2 text-sm">
-          Seleccionados: {selected.length}
-        </span>
-
-      </div>
-
-      {/* 📱 LISTA DE DISPOSITIVOS */}
-      <div className="mt-2">
-
-        <h3 className="mb-2">Dispositivos</h3>
-
-        {devices.map((d, i) => (
-
-          <div
-            key={i}
-            onClick={() => toggle(d.ip)}
-            style={{
-              border: selected.includes(d.ip)
-                ? "2px solid cyan"
-                : "1px solid gray",
-              padding: "8px",
-              marginBottom: "6px",
-              cursor: "pointer"
-            }}
-          >
-            <DeviceControl device={d} />
+            {/* Buttons (Ortogonales) */}
+            <div className="grid grid-cols-3 gap-3">
+              {['Scan Network', 'Connect TCP/IP', 'Manual Connection', 'ADB Restart', 'Open Logs'].map(btn => (
+                <button key={btn} className="bg-gray-950 border border-gray-800 text-gray-500 px-4 py-2 text-[10px] uppercase tracking-widest hover:border-cyan-700 hover:text-cyan-400 transition-all hover:shadow-[0_0_10px_rgba(0,240,255,0.2)]">
+                  {btn}
+                </button>
+              ))}
+            </div>
           </div>
 
-        ))}
-
-      </div>
-
+          {/* Status Panels (Esquina superior izquierda) */}
+          <div className="absolute top-4 left-4 border border-gray-800 bg-gray-950/80 p-3 text-[9px] flex flex-col gap-1 tracking-widest z-20">
+            <p>ADB Service: <span className="text-green-400 animate-pulse">ONLINE</span></p>
+            <p>USB Listener: <span className="text-green-400">ACTIVE</span></p>
+            <p>TCP/IP Discovery: <span className="text-cyan-400">ACTIVE</span></p>
+            <p>Wireless Scan: <span className="text-purple-400">RUNNING</span></p>
+            <p>HDMI/DP Detection: <span className="text-gray-600">WAITING</span></p>
+          </div>
+        </div>
+      ) : (
+        <ActiveControlGrid devices={devices} />
+      )}
     </div>
   )
 }
-import DeviceControl from "./components/DeviceControl"
-
-export default function App() {
-

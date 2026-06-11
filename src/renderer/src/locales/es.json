@@ -1,0 +1,13 @@
+{
+  "adbService": "Servicio ADB",
+  "online": "EN LÍNEA",
+  "offline": "DESCONECTADO",
+  "noDevice": "Ningún dispositivo conectado",
+  "waitingMode": "Esperando dispositivo...",
+  "usbListener": "Listener USB",
+  "active": "ACTIVO",
+  "syncBridge": "PUENTE DE SINCRONIZACIÓN",
+  "connected": "CONECTADO",
+  "tcpIp": "TCP/IP",
+  "discovery": "DESCUBRIENDO"
+}

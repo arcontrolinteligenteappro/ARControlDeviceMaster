@@ -1,0 +1,13 @@
+{
+  "adbService": "ADB Service",
+  "online": "ONLINE",
+  "offline": "OFFLINE",
+  "noDevice": "No device connected",
+  "waitingMode": "Waiting for device...",
+  "usbListener": "USB Listener",
+  "active": "ACTIVE",
+  "syncBridge": "SYNC BRIDGE",
+  "connected": "CONNECTED",
+  "tcpIp": "TCP/IP",
+  "discovery": "DISCOVERY"
+}
