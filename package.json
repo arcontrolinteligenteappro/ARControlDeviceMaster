@@ -5,35 +5,64 @@
   "author": "ChrisRey91 - www.arcontrolinteligente.com",
   "main": "dist/main/index.js",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
-    "package": "electron-builder"
+    "package": "electron-builder",
+    "build:package": "npm run build && npm run package",
+    "test": "jest",
+    "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
+    "@devicefarmer/adbkit": "^3.3.8",
+    "@radix-ui/react-slot": "^1.2.5",
+    "@tuyapi/cloud": "^0.6.2",
     "adbkit": "^2.11.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "command-exists": "^1.2.9",
+    "express": "^5.2.1",
+    "firebase-admin": "^14.0.0",
     "framer-motion": "^12.40.0",
     "i18next": "^26.3.1",
+    "i18next-browser-languagedetector": "^8.2.1",
     "node-fetch": "^3.3.2",
     "react": "^18",
     "react-dom": "^18",
     "react-i18next": "^17.0.8",
-    "socket.io-client": "^4.8.3"
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
+    "tailwind-merge": "^3.6.0",
+    "uiohook-napi": "^1.5.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/command-exists": "^1.2.3",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",
-    "@types/node-fetch": "^2.6.13",
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
     "@vitejs/plugin-react": "^4",
     "autoprefixer": "^10.5.0",
     "electron": "^30",
     "electron-builder": "^24.13.3",
     "electron-vite": "^2",
-    "express": "^5.2.1",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "memfs": "^4.57.7",
+    "node-fetch": "^2.6.13",
     "postcss": "^8.5.15",
-    "socket.io": "^4.8.3",
+    "prettier": "^3.8.4",
     "tailwindcss": "^3.4.10",
+    "ts-jest": "^29.4.11",
     "typescript": "^5"
   },
   "build": {
@@ -48,16 +77,20 @@
     ],
     "linux": {
       "category": "Utility",
-      "icon": "resources/icons"
+      "icon": "resources/icono.png"
     },
     "win": {
-        "target": "nsis",
-        "icon": "resources/icons/256x256.png"
+      "target": "nsis",
+      "icon": "resources/icono.png"
     },
     "extraResources": [
       {
         "from": "resources/bin",
         "to": "bin"
+      },
+      {
+        "from": "resources",
+        "to": "resources"
       }
     ]
   }

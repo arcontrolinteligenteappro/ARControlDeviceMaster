@@ -1,8 +1,8 @@
-export default function Splash({ onFinish }: any) {
+import React from 'react';
 
+export default function Splash({ onFinish }: any) {
   return (
     <div className="h-screen w-full relative bg-black">
-
       <video
         className="absolute inset-0 w-full h-full object-cover"
         autoPlay
@@ -24,8 +24,6 @@ export default function Splash({ onFinish }: any) {
       >
         [ OVERRIDE ]
       </button>
-
     </div>
-  )
+  );
 }
-``

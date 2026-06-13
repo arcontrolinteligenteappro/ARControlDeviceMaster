@@ -1,0 +1,24 @@
+{
+  "appId": "com.electron.app",
+  "productName": "AR Control Device",
+  "directories": {
+    "output": "release/"
+  },
+  "files": [
+    "dist/main/**/*",
+    "dist/preload/**/*",
+    "dist/renderer/**/*"
+  ],
+  "win": {
+    "icon": "build/icon.ico",
+    "target": "nsis"
+  },
+  "mac": {
+    "icon": "build/icon.icns",
+    "target": "dmg"
+  },
+  "linux": {
+    "icon": "build/icon.png",
+    "target": "AppImage"
+  }
+}

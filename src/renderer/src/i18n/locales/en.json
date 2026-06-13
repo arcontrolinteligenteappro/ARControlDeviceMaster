@@ -1,0 +1,11 @@
+{
+  "app_title": "AR Control Device",
+  "welcome_message": "Welcome to the AR Control Device application!",
+  "main_screen_title": "Main Screen",
+  "streaming_from": "Streaming from",
+  "searching_for_devices": "Searching for devices...",
+  "connected_devices": "Connected Devices",
+  "no_devices_found": "No Devices Found",
+  "ensure_device_is_connected": "Please ensure your device is connected and USB debugging is enabled.",
+  "search_again": "Search Again"
+}

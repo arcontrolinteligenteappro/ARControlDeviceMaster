@@ -1,33 +1,30 @@
-import { useState } from "react"
+import { useState } from 'react';
 
 export default function ManualDeviceForm({ onUpdate }: any) {
-
-  const [ip, setIp] = useState("")
-  const [type, setType] = useState("android_tv")
+  const [ip, setIp] = useState('');
+  const [type, setType] = useState('android_tv');
 
   const handleAdd = async () => {
-
     if (!ip) {
-      alert("Ingresa IP")
-      return
+      alert('Ingresa IP');
+      return;
     }
 
     const device = {
       id: ip,
       ip,
-      type
-    }
+      type,
+    };
 
-    const updated = await window.api.addDevice(device)
+    const updated = await window.api.addDevice(device);
 
-    onUpdate(updated)
+    onUpdate(updated);
 
-    setIp("")
-  }
+    setIp('');
+  };
 
   return (
     <div className="border p-2 text-xs text-cyan-400">
-
       <h3>Agregar dispositivo manual</h3>
 
       <input
@@ -45,10 +42,7 @@ export default function ManualDeviceForm({ onUpdate }: any) {
         <option value="yeelight">Yeelight</option>
       </select>
 
-      <button onClick={handleAdd}>
-        GUARDAR
-      </button>
-
+      <button onClick={handleAdd}>GUARDAR</button>
     </div>
-  )
+  );
 }

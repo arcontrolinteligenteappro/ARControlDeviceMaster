@@ -1,11 +1,19 @@
-import { app } from "electron"
-import path from "path"
+import { app } from 'electron';
+import path from 'path';
 
-export function getBinPath(file: string) {
+const isDev = process.env.NODE_ENV !== 'production';
 
-  if (app.isPackaged) {
-    return path.join(process.resourcesPath, "bin", file)
+/**
+ * Gets the absolute path to a resource within the application bundle.
+ * In development, it points to the `resources` folder in the project root.
+ * In production, it points to the `resources` folder inside the packaged app.
+ * @param subpath The relative path to the resource from the `resources` directory.
+ */
+export function getResourcePath(subpath: string): string {
+  if (isDev) {
+    // In development, resources are in the project root's 'resources' directory
+    return path.join(app.getAppPath(), '../../resources', subpath);
   }
-
-  return path.join(process.cwd(), "resources/bin", file)
+  // In production, resources are packed into the app.asar's parent directory
+  return path.join(process.resourcesPath, subpath);
 }

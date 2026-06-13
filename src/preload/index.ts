@@ -1,35 +1,47 @@
-import { contextBridge, ipcRenderer } from 'electron'
+// src/preload/index.ts
+import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { IpcChannel, IpcEvent } from '../main/ipc';
 
-contextBridge.exposeInMainWorld('api', {
-  // DOMINIO: SISTEMA Y CONECTIVIDAD
-  sys: {
-    reboot: (deviceId: string, mode: 'normal'|'recovery'|'fastboot'|'download'|'edl') => 
-      ipcRenderer.invoke('sys:reboot', deviceId, mode),
-    getTelemetry: (deviceId: string) => ipcRenderer.invoke('sys:getTelemetry', deviceId)
+const api = {
+  // Función para invocar canales y recibir una promesa (para comunicación de dos vías)
+  invoke: (channel: IpcChannel, ...args: any[]) => {
+    return ipcRenderer.invoke(channel, ...args);
   },
-  // DOMINIO: CONTROL Y MIRRORING (Baja Latencia)
-  control: {
-    startScrcpy: (config: any) => ipcRenderer.invoke('control:startScrcpy', config),
-    sendInput: (deviceId: string, inputData: any) => ipcRenderer.invoke('control:sendInput', inputData), // Persistent Shell
-    toggleScreenOff: (deviceId: string) => ipcRenderer.invoke('control:toggleScreenOff', deviceId),
-    setPeripheralConfig: (config: any) => ipcRenderer.invoke('control:setPeripheralConfig', config)
+
+  // Función para enviar a canales (para comunicación de una vía)
+  send: (channel: IpcEvent, ...args: any[]) => {
+    ipcRenderer.send(channel, ...args);
   },
-  // DOMINIO: APPS Y DEBLOAT
-  apps: {
-    installPackage: (deviceIds: string[], apkPath: string) => ipcRenderer.invoke('apps:installPackage', deviceIds, apkPath),
-    analyzeApp: (deviceId: string, packageName: string) => ipcRenderer.invoke('apps:analyzeApp', deviceId, packageName),
-    runDebloat: (deviceIds: string[], profile: 'google'|'samsung'|'carrier'|'oem') => 
-      ipcRenderer.invoke('apps:runDebloat', deviceIds, profile)
+
+  // Función para suscribirse a eventos desde el proceso principal
+  on: (
+    channel: IpcEvent,
+    listener: (event: IpcRendererEvent, ...args: any[]) => void,
+  ) => {
+    ipcRenderer.on(channel, listener);
+
+    // Devolvemos una función para poder desuscribirse
+    return () => {
+      ipcRenderer.removeListener(channel, listener);
+    };
   },
-  // DOMINIO: FORENSE (Delegado a Workers)
-  forensic: {
-    startSQLiteCarving: (deviceId: string, dbName: string) => ipcRenderer.invoke('forensic:startSQLiteCarving', deviceId, dbName),
-    startFileCarving: (deviceId: string, hexPattern: string) => ipcRenderer.invoke('forensic:startFileCarving', deviceId, hexPattern),
-    analyzeLogcatWithAI: (rawLogs: string) => ipcRenderer.invoke('forensic:analyzeLogcatWithAI', rawLogs)
-  },
-  // DOMINIO: TELECOM
-  telecom: {
-    injectApn: (deviceIds: string[], apnConfig: any) => ipcRenderer.invoke('telecom:injectApn', deviceIds, apnConfig),
-    injectDialerCode: (deviceId: string, code: string) => ipcRenderer.invoke('telecom:injectDialerCode', deviceId, code)
+
+  // Exponemos de forma segura el manejador de diálogo de archivos que hemos creado
+  invokeFileDialog: () => ipcRenderer.invoke('open-file-dialog-for-apk'),
+};
+
+// Exponer el API al mundo del renderer de forma segura
+contextBridge.exposeInMainWorld('api', api);
+
+// Exponer los nombres de los canales para evitar errores de tipeo
+contextBridge.exposeInMainWorld('IpcChannel', IpcChannel);
+contextBridge.exposeInMainWorld('IpcEvent', IpcEvent);
+
+// TypeScript anota la existencia de `window.api`
+declare global {
+  interface Window {
+    api: typeof api;
+    IpcChannel: typeof IpcChannel;
+    IpcEvent: typeof IpcEvent;
   }
-})
+}

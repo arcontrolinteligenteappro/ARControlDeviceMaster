@@ -1,0 +1,11 @@
+{
+  "app_title": "Dispositivo de Control AR",
+  "welcome_message": "¡Bienvenido a la aplicación Dispositivo de Control AR!",
+  "main_screen_title": "Pantalla Principal",
+  "streaming_from": "Transmitiendo desde",
+  "searching_for_devices": "Buscando dispositivos...",
+  "connected_devices": "Dispositivos Conectados",
+  "no_devices_found": "No se encontraron dispositivos",
+  "ensure_device_is_connected": "Por favor, asegúrese de que su dispositivo esté conectado y que la depuración USB esté habilitada.",
+  "search_again": "Buscar de Nuevo"
+}

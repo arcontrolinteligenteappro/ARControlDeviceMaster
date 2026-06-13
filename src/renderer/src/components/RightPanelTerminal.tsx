@@ -1,10 +1,33 @@
 // src/renderer/src/components/RightPanelTerminal.tsx
 import React, { useEffect, useRef, useState } from 'react';
+import { IpcEvent } from '../../../main/ipc'; // Importar el enum de eventos
 
 interface LogEntry {
   type: 'ERROR' | 'WARN' | 'SUCCESS' | 'CMD' | 'INFO';
   message: string;
 }
+
+// Función para inferir el tipo de log a partir del mensaje
+const parseLogMessage = (message: string): LogEntry => {
+  const lowerCaseMessage = message.toLowerCase();
+  if (lowerCaseMessage.includes('error')) {
+    return { type: 'ERROR', message };
+  }
+  if (
+    lowerCaseMessage.includes('warn') ||
+    lowerCaseMessage.includes('warning')
+  ) {
+    return { type: 'WARN', message };
+  }
+  if (lowerCaseMessage.includes('success')) {
+    return { type: 'SUCCESS', message };
+  }
+  if (lowerCaseMessage.startsWith('>')) {
+    // Asumimos que los comandos empiezan con >
+    return { type: 'CMD', message };
+  }
+  return { type: 'INFO', message };
+};
 
 const RightPanelTerminal: React.FC = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -18,52 +41,53 @@ const RightPanelTerminal: React.FC = () => {
   }, [logs]);
 
   useEffect(() => {
-    // Mock data for demonstration until IPC is fully wired
-    setLogs([
-        { type: 'CMD', message: 'Starting AR Control Device Master v9.0...' },
-        { type: 'SUCCESS', message: 'IPC Master Router Initialized.' },
-        { type: 'INFO', message: 'Listening for device connections on ADB server.' },
-        { type: 'WARN', message: 'High memory usage detected on worker thread #2.' },
-    ]);
+    // Inicializamos con un mensaje de bienvenida
+    setLogs([parseLogMessage('Welcome to AR-Control. Terminal is ready.')]);
 
-    const handleLog = (log: LogEntry) => {
-        setLogs((prevLogs) => [...prevLogs, log]);
+    // El listener ahora es robusto y tipado
+    const handleLog = (_event: any, message: string) => {
+      const newLog = parseLogMessage(message);
+      setLogs((prevLogs) => [...prevLogs, newLog]);
     };
-    
-    // @ts-ignore - Assuming .on method exists on window.api for stream listeners
-    window.api.on('terminal:stdout', handleLog);
+
+    // Usamos la API estándar de Electron y el canal correcto
+    window.electron.ipcRenderer.on(IpcEvent.TERMINAL_OUTPUT, handleLog);
 
     return () => {
-      // @ts-ignore
-      window.api.off('terminal:stdout', handleLog);
+      // Limpiamos el listener al desmontar el componente
+      window.electron.ipcRenderer.removeListener(
+        IpcEvent.TERMINAL_OUTPUT,
+        handleLog,
+      );
     };
   }, []);
 
   const getTextColor = (type: LogEntry['type']) => {
     switch (type) {
       case 'ERROR':
-        return 'text-red-500'; // Red for errors
+        return 'text-red-500';
       case 'WARN':
-        return 'text-yellow-400'; // Yellow for warnings
+        return 'text-yellow-400';
       case 'SUCCESS':
-        return 'text-[#00FF41]'; // Terminal green for success
+        return 'text-green-400';
       case 'CMD':
-        return 'text-cyan-400'; // Cyan for commands/user-input
+        return 'text-cyan-400';
       default:
-        return 'text-gray-300'; // Default color for info
+        return 'text-gray-300';
     }
   };
 
   return (
-    <div
-      className="h-full p-4 font-mono text-[10px]"
-      style={{ backgroundColor: '#010204' }}
-    >
-      <div className="overflow-y-auto h-full">
+    <div className="h-full p-3 font-mono text-xs bg-gray-900 text-white">
+      <div className="overflow-y-auto h-full scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
         {logs.map((log, index) => (
-          <p key={index} className={`whitespace-pre-wrap ${getTextColor(log.type)}`}>
-            <span className='text-gray-500 mr-2'>{`>_`}</span>{log.message}
-          </p>
+          <div
+            key={index}
+            className={`whitespace-pre-wrap ${getTextColor(log.type)}`}
+          >
+            <span className="text-gray-600 mr-2 select-none">#</span>
+            <span>{log.message}</span>
+          </div>
         ))}
         <div ref={terminalEndRef} />
       </div>

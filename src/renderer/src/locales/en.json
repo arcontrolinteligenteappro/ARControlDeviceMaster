@@ -9,5 +9,12 @@
   "syncBridge": "SYNC BRIDGE",
   "connected": "CONNECTED",
   "tcpIp": "TCP/IP",
-  "discovery": "DISCOVERY"
+  "discovery": "DISCOVERING",
+  "manualConnection": "Manual Connection",
+  "ipAddress": "IP Address",
+  "port": "Port",
+  "authorizationToken": "Authorization Token",
+  "connect": "Connect",
+  "yes": "Yes",
+  "no": "No"
 }

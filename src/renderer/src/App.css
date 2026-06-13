@@ -1,0 +1,47 @@
+
+/* src/renderer/src/App.css */
+
+/* ... (estilos existentes) ... */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.app-container {
+    width: 100vw;
+    height: 100vh;
+    color: #ffffff;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center center;
+    transition: background-image 0.5s ease-in-out;
+}
+
+.state-initflow {
+    background-image: url('./assets/bg-init.jpg');
+}
+
+.state-disconnected {
+    background-image: url('./assets/bg-disconnected.jpg');
+}
+
+.state-connected {
+    background-image: url('./assets/bg-connected.jpg');
+}
+
+/* Animación para las notificaciones */
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-fade-in-right {
+    animation: fadeInRight 0.3s ease-out forwards;
+}
+

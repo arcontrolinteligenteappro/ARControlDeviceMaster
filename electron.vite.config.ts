@@ -1,31 +1,31 @@
 // electron.vite.config.ts
-import { resolve } from 'path'
-import { defineConfig } from 'electron-vite'
-import react from '@vitejs/plugin-react'
+import { resolve } from 'path';
+import { defineConfig } from 'electron-vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   main: {
     build: {
       outDir: 'dist/main',
       rollupOptions: {
-        external: ['express', 'socket.io']
-      }
-    }
+        external: ['express', 'socket.io'],
+      },
+    },
   },
   preload: {
     build: {
-      outDir: 'dist/preload'
-    }
+      outDir: 'dist/preload',
+    },
   },
   renderer: {
     build: {
-      outDir: 'dist/renderer'
+      outDir: 'dist/renderer',
     },
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src')
-      }
+        '@': resolve('src/renderer/src'),
+      },
     },
-    plugins: [react()]
-  }
-})
+    plugins: [react()],
+  },
+});

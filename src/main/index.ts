@@ -1,19 +1,18 @@
-// src/main/index.ts
-import { app, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import icon from '../../src/renderer/src/assets/icono.png?asset'
-import { SyncServer } from './modules/bridge/SyncServer'
-import { deviceManager } from './modules/devices/DeviceManager'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import icon from '../../resources/icon.png?asset'
+import { IpcChannel } from './ipc/IpcChannel'
+import { AdbManager } from './modules/adb/AdbManager'
+import { ScreenMirrorManager } from './modules/screen-mirror/ScreenMirrorManager'
 
-function createWindow(): void {
+const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 720,
-    minWidth: 1024,
+    width: 900,
+    height: 670,
     show: false,
-    backgroundColor: '#02050A',
-    icon: icon,
     autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -24,7 +23,12 @@ function createWindow(): void {
     mainWindow.show()
   })
 
-  if (process.env['ELECTRON_RENDERER_URL']) {
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
@@ -32,12 +36,22 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
-  const syncServerInstance = new SyncServer()
-  deviceManager.init(syncServerInstance)
-  
+  electronApp.setAppUserModelId('com.electron')
+
+  app.on('browser-window-created', (_, window) => {
+    optimizer.watch(window)
+  })
+
   createWindow()
 
-  app.on('activate', function () {
+  const adbManager = new AdbManager()
+  new ScreenMirrorManager(ipcMain, adbManager)
+
+  ipcMain.handle(IpcChannel.LIST_DEVICES, async () => {
+    return await adbManager.listDevices()
+  })
+
+  app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })

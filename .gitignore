@@ -1,8 +1,16 @@
-node_modules/
-out/
-dist/
-release_build/
-.vscode/
-*.logrelease/
-dist/
-out/
+# Archivos de configuración local que contienen secretos
+config.json
+
+# Dependencias del proyecto
+node_modules
+
+# Archivos de build y temporales
+dist
+dist-electron
+release
+.cache
+*.log
+
+# Directorios de IDEs
+.vscode
+.idea

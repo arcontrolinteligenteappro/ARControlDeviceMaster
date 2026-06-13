@@ -9,8 +9,16 @@
     "esModuleInterop": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node"],
-    "allowJs": true
+    "types": ["node", "jest"],
+    "allowJs": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/renderer/src/*"],
+      "@ipc/*": ["src/ipc/*"],
+      "@workers/*": ["src/main/workers/*"],
+      "@ui/*": ["src/renderer/src/components/ui/*"],
+      "@shared/*": ["src/shared/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules"]

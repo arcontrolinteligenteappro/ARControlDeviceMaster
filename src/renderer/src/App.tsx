@@ -1,48 +1,89 @@
-// src/renderer/src/App.tsx
-import React, { useState } from 'react'
-import { useTranslation } from 'react-i18next' // Import useTranslation
-import SplashScreen from './components/SplashScreen'
-import ActiveControlGrid from './components/ActiveControlGrid'
-import bgSinDispositivos from './assets/bg_sindispositivos.png'
-import { useSync } from './hooks/useSync'
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AdbDevice } from '@shared/types/AdbDevice';
+import { IpcChannel } from '@ipc/index';
+import { Button } from '@ui/button';
+import Spinner from '@ui/Spinner'; // Import the new Spinner component
 
-export default function App() {
-  const { t } = useTranslation() // Initialize the translation hook
-  const [showSplash, setShowSplash] = useState(true)
-  
-  // State for devices detected locally by Electron's main process
-  const [localDevices, setLocalDevices] = useState([]) 
-  
-  // Hook for Mobile Synergy. Provides device list from the SyncServer.
-  const { devices: mobileDevices, isMobile } = useSync();
-  
-  // The definitive list of devices depends on the environment (Electron vs Browser)
-  const devices = isMobile ? mobileDevices : localDevices;
+const App: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const [devices, setDevices] = useState<AdbDevice[]>([]);
+  const [selectedDevice, setSelectedDevice] = useState<AdbDevice | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
-  if (showSplash) return <SplashScreen onFinish={() => setShowSplash(false)} />
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+  };
+
+  const handleDeviceSelection = (device: AdbDevice) => {
+    setSelectedDevice(device);
+    window.electron.ipcRenderer.send(IpcChannel.START_SCREEN_MIRROR, device.id);
+  };
+
+  const searchForDevices = async () => {
+    setIsLoading(true);
+    try {
+      const foundDevices = await window.electron.ipcRenderer.invoke(
+        IpcChannel.LIST_DEVICES,
+      );
+      setDevices(foundDevices);
+    } catch (error) {
+      console.error('Error searching for devices:', error);
+      // Optionally, set an error state and display a message to the user
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    searchForDevices();
+  }, []);
 
   return (
-    <div className="w-screen h-screen bg-[#02050A] text-white font-mono flex flex-col">
-      {devices.length === 0 ? (
-        // MODO ESPERA: No devices connected, show status panel
-        <div 
-          className="flex-1 w-full h-full bg-cover bg-center bg-no-repeat flex flex-col relative"
-          style={{ backgroundImage: `url(${bgSinDispositivos})` }}
-        >
-          <div className="absolute top-4 left-4 border border-cyan-900/50 bg-black/80 p-3 text-[9px] flex flex-col gap-1 tracking-widest z-20 backdrop-blur-md">
-            <p>{t('adbService')}: <span className="text-green-400 animate-pulse">{t('online')}</span></p>
-            <p>{t('usbListener')}: <span className="text-green-400">{t('active')}</span></p>
-            {isMobile ? (
-              <p>{t('syncBridge')}: <span className="text-cyan-400 animate-pulse">{t('connected')}</span></p>
-            ) : (
-              <p>{t('tcpIp')}: <span className="text-cyan-400">{t('discovery')}</span></p>
-            )}
-          </div>
+    <div className="container">
+      <div className="language-switcher">
+        <Button onClick={() => changeLanguage('en')}>English</Button>
+        <Button onClick={() => changeLanguage('es')}>Español</Button>
+      </div>
+
+      <h1>{t('app_title')}</h1>
+
+      {isLoading ? (
+        <div className="loading-container">
+          <Spinner />
+          <p>{t('searching_for_devices')}</p>
+        </div>
+      ) : devices.length > 0 ? (
+        <div className="devices-container">
+          <h2>{t('connected_devices')}</h2>
+          <ul>
+            {devices.map((device) => (
+              <li key={device.id}>
+                <Button onClick={() => handleDeviceSelection(device)}>
+                  {device.id} - {device.model}
+                </Button>
+              </li>
+            ))}
+          </ul>
         </div>
       ) : (
-        // MODO ACTIVO: Devices are connected, show the tactical grid
-        <ActiveControlGrid devices={devices} />
+        <div className="no-devices-container">
+          <h2>{t('no_devices_found')}</h2>
+          <p>{t('ensure_device_is_connected')}</p>
+          <Button onClick={searchForDevices}>{t('search_again')}</Button>
+        </div>
+      )}
+
+      {selectedDevice && (
+        <div className="video-container">
+          <h3>
+            {t('streaming_from')}: {selectedDevice.id}
+          </h3>
+          {/* Video streaming component will go here */}
+        </div>
       )}
     </div>
-  )
-}
+  );
+};
+
+export default App;

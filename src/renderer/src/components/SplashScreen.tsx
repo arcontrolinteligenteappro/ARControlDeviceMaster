@@ -1,29 +1,54 @@
 // src/renderer/src/components/SplashScreen.tsx
-import video from '../assets/animacion.mp4'
+import { useEffect, useRef } from 'react';
 
 type Props = {
-  onFinish: () => void
-}
+  onFinish: () => void;
+};
 
 export default function SplashScreen({ onFinish }: Props) {
-  return (
-    <div className="w-full h-screen bg-black">
-      <video
-        src={video}
-        autoPlay
-        muted
-        onEnded={onFinish}
-        className="w-full h-full object-cover"
-      />
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-      <div className="absolute bottom-4 right-4">
-        <button
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
-          onClick={onFinish}
-        >
-          [ OVERRIDE ]
-        </button>
-      </div>
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const handleVideoEnd = () => {
+        onFinish();
+      };
+
+      video.addEventListener('ended', handleVideoEnd);
+
+      // In case the video is paused by the user or other interruptions
+      const handlePlay = () => {
+        video.play().catch((error) => {
+          console.error('Video play failed:', error);
+          // If autoplay fails, fallback to finishing the splash screen
+          onFinish();
+        });
+      };
+
+      handlePlay();
+
+      return () => {
+        video.removeEventListener('ended', handleVideoEnd);
+      };
+    } else {
+      // Fallback if the video element is not available
+      const timer = setTimeout(() => {
+        onFinish();
+      }, 3000); // Default timeout if video fails
+      return () => clearTimeout(timer);
+    }
+  }, [onFinish]);
+
+  return (
+    <div className="w-full h-screen bg-black flex flex-col items-center justify-center overflow-hidden">
+      <video
+        ref={videoRef}
+        src="./resources/introcompleto.mp4"
+        className="w-full h-full object-cover"
+        playsInline
+        muted // Muted is often necessary for autoplay to work in browsers
+      />
     </div>
-  )
+  );
 }

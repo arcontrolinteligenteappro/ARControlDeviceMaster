@@ -33,10 +33,10 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
 
         {/* HUD animations & System Status (Scene 4) */}
         <div className="text-[10px] text-gray-500 flex flex-col gap-1 items-start border border-gray-800 p-4 bg-gray-950/50">
-          <p className="text-cyan-400 animate-pulse">[>] INITIALIZING SYSTEM...</p>
-          <p className="text-cyan-400">[>] TRANSPORT LAYER ONLINE (USB/TCP)</p>
-          <p className="text-purple-400">[>] AI CORE STARTING...</p>
-          <p className="text-green-400">[>] TACTICAL COMMAND CENTER READY</p>
+          <p className="text-cyan-400 animate-pulse">[&gt;] INITIALIZING SYSTEM...</p>
+          <p className="text-cyan-400">[&gt;] TRANSPORT LAYER ONLINE (USB/TCP)</p>
+          <p className="text-purple-400">[&gt;] AI CORE STARTING...</p>
+          <p className="text-green-400">[&gt;] TACTICAL COMMAND CENTER READY</p>
         </div>
       </div>
 

@@ -1,29 +1,171 @@
 // src/main/modules/devices/DeviceManager.ts
-import { SyncServer } from '../bridge/SyncServer';
+import { BrowserWindow } from 'electron';
+import Adb from '@devicefarmer/adbkit';
+import { EventEmitter } from 'events';
+import { Device, DeviceState } from './Device';
+import { IpcEvent } from '../../ipc';
 
-class DeviceManager {
-  // El operador '!' asegura a TypeScript que nosotros nos encargaremos de la inicialización
-  private syncServer!: SyncServer;
-  private pollInterval!: NodeJS.Timeout;
+// Constantes para los comandos y propiedades de ADB
+const ADB_PROPERTIES = {
+  MODEL: 'ro.product.model',
+};
 
-  constructor() {}
+const ADB_COMMANDS = {
+  WHOAMI_ROOT: 'su -c whoami',
+};
 
-  public init(syncServer: SyncServer) {
-    this.syncServer = syncServer;
-    this.startPolling();
+// Interfaz para un dispositivo ADB puro de adbkit
+interface AdbKitDevice {
+  id: string;
+  type: DeviceState;
+}
+
+class DeviceManager extends EventEmitter {
+  private client = Adb.createClient();
+  private devices: Map<string, Device> = new Map();
+  private mainWindow: BrowserWindow | null = null;
+
+  constructor() {
+    super();
   }
 
-  private startPolling() {
-    this.pollInterval = setInterval(() => {
-      const mockDevices = [
-        { id: 'emulator-5554', type: 'VR', model: 'Quest 2', brand: 'Oculus', android: '12', root: false, knox: 'N/A', mdm: 'Unknown', connection: 'WiFi' },
-        { id: '192.168.1.10:5555', type: 'Tablet', model: 'Galaxy Tab S8', brand: 'Samsung', android: '13', root: false, knox: 'v3.9', mdm: 'KNOX', connection: 'WiFi' },
-        { id: 'R58R30ABCDE', type: 'Smartphone', model: 'S21 Ultra', brand: 'Samsung', android: '14', root: true, knox: 'v3.9', mdm: 'N/A', connection: 'USB' }
-      ];
+  public setWindow(win: BrowserWindow | null) {
+    this.mainWindow = win;
+  }
 
-      // El 'as any' bypassa temporalmente el validador estricto de tipos para enviar los datos de prueba
-      this.syncServer.broadcastTelemetry(mockDevices as any);
-    }, 3000);
+  public start() {
+    console.log('DeviceManager: Starting ADB tracker...');
+    this.client
+      .trackDevices()
+      .then((tracker) => {
+        tracker.on('add', (device: AdbKitDevice) =>
+          this.handleDeviceAdded(device),
+        );
+        tracker.on('remove', (device: AdbKitDevice) =>
+          this.handleDeviceRemoved(device),
+        );
+        tracker.on('change', (device: AdbKitDevice) =>
+          this.handleDeviceChanged(device),
+        );
+        tracker.on('end', () =>
+          console.log('DeviceManager: Tracking stopped.'),
+        );
+        tracker.on('error', (err: Error) =>
+          console.error('DeviceManager: Tracking error:', err),
+        );
+      })
+      .catch((err: Error) => {
+        console.error('DeviceManager: Failed to start ADB tracker:', err.stack);
+        this.emit('error', 'Failed to start ADB daemon.');
+      });
+  }
+
+  private async handleDeviceAdded(adbDevice: AdbKitDevice) {
+    console.log(
+      `DeviceManager: Device added: ${adbDevice.id} (${adbDevice.type})`,
+    );
+    if (this.devices.has(adbDevice.id)) {
+      return this.handleDeviceChanged(adbDevice);
+    }
+
+    const newDevice: Device = { id: adbDevice.id, state: adbDevice.type };
+    this.devices.set(adbDevice.id, newDevice);
+
+    if (newDevice.state === 'device') {
+      await this.enrichDeviceDetails(newDevice);
+    }
+
+    this.notifyUpdates();
+  }
+
+  private handleDeviceRemoved(adbDevice: AdbKitDevice) {
+    console.log(`DeviceManager: Device removed: ${adbDevice.id}`);
+    if (this.devices.delete(adbDevice.id)) {
+      this.notifyUpdates();
+    }
+  }
+
+  private async handleDeviceChanged(adbDevice: AdbKitDevice) {
+    console.log(
+      `DeviceManager: Device changed: ${adbDevice.id} -> ${adbDevice.type}`,
+    );
+    const existingDevice = this.devices.get(adbDevice.id);
+
+    if (!existingDevice) {
+      return this.handleDeviceAdded(adbDevice);
+    }
+
+    if (existingDevice.state !== adbDevice.type) {
+      existingDevice.state = adbDevice.type;
+      if (existingDevice.state === 'device' && !existingDevice.model) {
+        await this.enrichDeviceDetails(existingDevice);
+      }
+    }
+
+    this.notifyUpdates();
+  }
+
+  private async enrichDeviceDetails(device: Device) {
+    try {
+      device.model = await this.getDeviceModel(device.id);
+      device.isRooted = await this.checkRootStatus(device.id);
+
+      // Placeholder for future enrichment
+      // device.knoxVersion = await this.getKnoxVersion(device.id);
+
+      console.log('DeviceManager: Enriched device details:', device);
+    } catch (err) {
+      console.error(
+        `DeviceManager: Failed to enrich details for ${device.id}:`,
+        err,
+      );
+      // Podríamos querer establecer un estado de error en el dispositivo aquí
+    }
+  }
+
+  private async getDeviceModel(deviceId: string): Promise<string> {
+    try {
+      const properties = await this.client.getProperties(deviceId);
+      return properties[ADB_PROPERTIES.MODEL] || 'Unknown';
+    } catch (err) {
+      console.error(`DeviceManager: Failed to get model for ${deviceId}`, err);
+      return 'Unknown';
+    }
+  }
+
+  private async checkRootStatus(deviceId: string): Promise<boolean> {
+    try {
+      const output = await this.client
+        .shell(deviceId, ADB_COMMANDS.WHOAMI_ROOT)
+        .then(Adb.util.readAll);
+      return output.toString().trim() === 'root';
+    } catch (err) {
+      // Si el comando falla, es seguro asumir que no es root.
+      return false;
+    }
+  }
+
+  private notifyUpdates() {
+    const deviceList = this.getDevices();
+    // Notificar a la ventana principal (Renderer process)
+    this.mainWindow?.webContents.send(
+      IpcEvent.DEVICES_LIST_UPDATED,
+      deviceList,
+    );
+
+    // Emitir evento para el proceso principal (Main process)
+    this.emit('devices-updated', deviceList);
+
+    // Determinar y emitir el estado de conexión global
+    const hasConnectedDevice = deviceList.some((d) => d.state === 'device');
+    this.emit(
+      'connection-state-changed',
+      hasConnectedDevice ? 'Connected' : 'Disconnected',
+    );
+  }
+
+  public getDevices(): Device[] {
+    return Array.from(this.devices.values());
   }
 }
 
