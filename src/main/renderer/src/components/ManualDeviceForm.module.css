@@ -1,0 +1,39 @@
+/* src/renderer/src/components/ManualDeviceForm.module.css */
+.formContainer {
+  border: 1px solid #00f2fe;
+  padding: 12px;
+  font-size: 12px;
+  color: #00f2fe;
+  background-color: #0a0a12;
+}
+
+.title { margin: 0 0 10px 0; font-size: 14px; }
+
+.inputField {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  background: #000;
+  border: 1px solid #444;
+  color: #00f2fe;
+  box-sizing: border-box;
+}
+
+.selectField {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  background: #000;
+  border: 1px solid #444;
+  color: #00f2fe;
+}
+
+.saveButton {
+  width: 100%;
+  padding: 8px;
+  background: #9d4edd;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}

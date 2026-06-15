@@ -1,35 +1,12 @@
+// src/preload/index.ts
 import { contextBridge, ipcRenderer } from 'electron';
 
-export const api = {
-  // DOMINIO: CONTROL (Fase 1, 2, 2.5)
-  control: {
-    getDevices: () => ipcRenderer.invoke('control:getDevices'),
-    multiBroadcast: (deviceIds: string[], command: string) =>
-      ipcRenderer.invoke('control:multiBroadcast', deviceIds, command),
-    multiStream: (deviceIds: string[], inputCmd: string) =>
-      ipcRenderer.invoke('control:multiStream', deviceIds, inputCmd),
-    multiClose: (deviceIds: string[]) =>
-      ipcRenderer.invoke('control:multiClose', deviceIds),
-  },
-
-  // DOMINIO: FORENSE (Fase 11) - Preparado para futuras implementaciones
-  forensic: {
-    extractSQLite: (deviceId: string, target: string) =>
-      ipcRenderer.invoke('forensic:extractSQLite', deviceId, target),
-    carveData: (dbPath: string) =>
-      ipcRenderer.invoke('forensic:carveData', dbPath),
-  },
-
-  // DOMINIO: TELECOM (Fase 10)
-  telecom: {
-    injectApn: (deviceIds: string[], config: any) =>
-      ipcRenderer.invoke('telecom:injectApn', deviceIds, config),
-  },
-};
-
-if (process.contextIsolated) {
-  contextBridge.exposeInMainWorld('api', api);
-} else {
-  // @ts-ignore
-  window.api = api;
-}
+contextBridge.exposeInMainWorld('electronAPI', {
+  captureScreen: (id: string) => ipcRenderer.invoke('capture-screenshot', id),
+  openShell: (id: string) => ipcRenderer.invoke('open-shell', id),
+  startForensic: (id: string) => ipcRenderer.invoke('forensic-start', id),
+  startScrcpy: (id: string) => ipcRenderer.invoke('scrcpy-start', id),
+  stopScrcpy: (id: string) => ipcRenderer.invoke('scrcpy-stop', id),
+  // Comando añadido para la funcionalidad de reinicio remoto
+  rebootDevice: (id: string) => ipcRenderer.invoke('reboot-device', id),
+});

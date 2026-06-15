@@ -1,0 +1,68 @@
+/* src/renderer/src/components/RadarInterface.module.css */
+.radarContainer {
+  width: 100%;
+  height: 100vh;
+  background-color: #020205;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  color: #00f2fe;
+  box-sizing: border-box;
+}
+
+.telemetryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.telemetryCard {
+  border: 1px solid #00f2fe;
+  padding: 15px;
+  background-color: #0a0a12;
+  box-shadow: inset 0 0 10px rgba(0, 242, 254, 0.1);
+}
+
+.labelSmall { font-size: 10px; letter-spacing: 1px; }
+
+.cardValue {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 5px;
+  color: #fff;
+}
+
+.bar { height: 2px; background: #9d4edd; margin-top: 10px; width: 100%; }
+
+.centralZone {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border: 1px solid #1a1a2e;
+  background: radial-gradient(circle, rgba(157, 78, 221, 0.05) 0%, rgba(2, 2, 5, 1) 70%);
+}
+
+.overlayText {
+  position: absolute;
+  text-align: center;
+  pointer-events: none;
+}
+
+.overlayTitle { margin: 0; color: #fff; font-size: 32px; text-shadow: 0 0 20px #00f2fe; }
+.overlaySubtitle { color: #00f2fe; letter-spacing: 4px; font-size: 14px; }
+
+.terminal {
+  height: 180px;
+  background-color: #000;
+  border: 1px solid #333;
+  padding: 15px;
+  font-family: monospace;
+  overflow-y: auto;
+  margin-top: 20px;
+}
+
+.terminalLine { color: #00ff00; margin: 0 0 5px 0; font-size: 13px; }
+.terminalPrompt { color: #00ff00; margin: 0; font-size: 13px; }

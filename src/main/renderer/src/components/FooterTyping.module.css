@@ -1,0 +1,13 @@
+/* src/renderer/src/components/FooterTyping.module.css */
+.footerContainer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 8px 0;
+  border-top: 1px solid #06b6d4; /* cyan-500 */
+  background-color: #000;
+  color: #22c55e; /* green-400 */
+  font-size: 0.875rem; /* text-sm */
+  z-index: 1000;
+}

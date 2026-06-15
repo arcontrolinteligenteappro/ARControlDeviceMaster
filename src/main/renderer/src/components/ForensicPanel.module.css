@@ -1,0 +1,30 @@
+/* src/renderer/src/components/ForensicPanel.module.css */
+.forensicContainer {
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
+  background-color: #05050a;
+  box-sizing: border-box;
+}
+
+.panelHeader {
+  border-bottom: 1px solid #ff0055;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  color: #ff0055;
+}
+
+.backButton {
+  background: transparent;
+  border: 1px solid #ff0055;
+  color: #ff0055;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.contentArea {
+  margin-top: 20px;
+  color: #fff;
+  font-family: monospace;
+}

@@ -1,0 +1,109 @@
+.appContainer {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #05050a;
+  color: #ffffff;
+  font-family: monospace;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.header {
+  border-bottom: 2px solid #9d4edd;
+  padding-bottom: 15px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title { 
+  color: #00f2fe; 
+  margin: 0; 
+  text-shadow: 0 0 10px rgba(0,242,254,0.5); 
+  font-size: 24px; 
+}
+
+.subtitle { 
+  color: #9d4edd; 
+  font-size: 12px; 
+  letter-spacing: 2px; 
+}
+
+.tacticalSection {
+  background-color: #0a0a12;
+  padding: 20px;
+  border: 1px solid #333;
+  margin-bottom: 30px;
+}
+
+.tacticalTitle {
+  color: #9d4edd;
+  margin: 0 0 15px 0;
+}
+
+.formWrapper {
+  display: flex;
+  gap: 15px;
+}
+
+.gridDevices {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.deviceCard {
+  background-color: #0a0a12;
+  border: 1px solid #00f2fe;
+  padding: 20px;
+}
+
+.deviceModel {
+  color: #fff;
+  margin-top: 0;
+}
+
+.buttonBase {
+  padding: 10px;
+  background: transparent;
+  cursor: pointer;
+  border: 1px solid #444;
+  color: #00f2fe;
+}
+
+.btnScan {
+  border-color: #00f2fe;
+}
+
+.inputField {
+  flex: 1;
+}
+
+.inputPort {
+  width: 100px;
+}
+
+.btnSubmit {
+  background-color: #9d4edd;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+}
+
+.cardActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btnMirror { 
+  border-color: #00f2fe; 
+  color: #00f2fe; 
+}
+
+.btnForensic { 
+  border-color: #ff0055; 
+  color: #ff0055; 
+}

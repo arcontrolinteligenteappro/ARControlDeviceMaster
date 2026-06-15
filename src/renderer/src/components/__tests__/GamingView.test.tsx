@@ -8,7 +8,15 @@ import { IpcChannel } from '@ipc/index';
 import { KeyMapping } from '@shared/types/keymapping';
 
 jest.mock('@ui/button', () => ({
-  Button: ({ children, onClick, variant }: {children: React.ReactNode, onClick: React.MouseEventHandler<HTMLButtonElement>, variant?: string}) => (
+  Button: ({
+    children,
+    onClick,
+    variant,
+  }: {
+    children: React.ReactNode;
+    onClick: React.MouseEventHandler<HTMLButtonElement>;
+    variant?: string;
+  }) => (
     <button onClick={onClick} data-variant={variant}>
       {children}
     </button>
@@ -71,7 +79,9 @@ describe('GamingView', () => {
   it('renders correctly and loads the default profile on mount', async () => {
     renderComponent();
     await waitFor(() => {
-      expect(screen.getByText(/Gaming Mode - test-device/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Gaming Mode - test-device/i),
+      ).toBeInTheDocument();
     });
     await waitFor(() => {
       expect(window.electron.ipcRenderer.invoke).toHaveBeenCalledWith(
@@ -90,7 +100,9 @@ describe('GamingView', () => {
 
   it('allows a user to save a new keymap profile', async () => {
     renderComponent();
-    await waitFor(() => expect(screen.getByRole('textbox')).toHaveValue('Default'));
+    await waitFor(() =>
+      expect(screen.getByRole('textbox')).toHaveValue('Default'),
+    );
 
     const profileInput = screen.getByRole('textbox');
     fireEvent.change(profileInput, { target: { value: 'my-new-profile' } });
@@ -104,12 +116,16 @@ describe('GamingView', () => {
         { name: 'my-new-profile', mappings: [] },
       );
     });
-    await waitFor(() => expect(window.alert).toHaveBeenCalledWith('Profile saved successfully!'));
+    await waitFor(() =>
+      expect(window.alert).toHaveBeenCalledWith('Profile saved successfully!'),
+    );
   });
 
   it('allows a user to load an existing keymap profile', async () => {
     renderComponent();
-    await waitFor(() => expect(screen.getByRole('textbox')).toHaveValue('Default'));
+    await waitFor(() =>
+      expect(screen.getByRole('textbox')).toHaveValue('Default'),
+    );
 
     const profileInput = screen.getByRole('textbox');
     fireEvent.change(profileInput, { target: { value: 'existing-profile' } });

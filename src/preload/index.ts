@@ -1,47 +1,62 @@
 // src/preload/index.ts
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { IpcChannel, IpcEvent } from '../main/ipc';
+import { contextBridge, ipcRenderer } from 'electron';
+import { IpcChannels, DeviceTelemetry, IpcResponse } from '../shared/ipc-types';
 
-const api = {
-  // Función para invocar canales y recibir una promesa (para comunicación de dos vías)
-  invoke: (channel: IpcChannel, ...args: any[]) => {
-    return ipcRenderer.invoke(channel, ...args);
-  },
+export const api = {
+  // --- MÓDULO ADB ---
+  getDevices: (): Promise<IpcResponse<DeviceTelemetry[]>> =>
+    ipcRenderer.invoke(IpcChannels.ADB_GET_DEVICES),
 
-  // Función para enviar a canales (para comunicación de una vía)
-  send: (channel: IpcEvent, ...args: any[]) => {
-    ipcRenderer.send(channel, ...args);
-  },
+  connectManual: (ip: string, port: string): Promise<IpcResponse> =>
+    ipcRenderer.invoke(IpcChannels.ADB_CONNECT_MANUAL, { ip, port }),
 
-  // Función para suscribirse a eventos desde el proceso principal
-  on: (
-    channel: IpcEvent,
-    listener: (event: IpcRendererEvent, ...args: any[]) => void,
-  ) => {
-    ipcRenderer.on(channel, listener);
+  // --- MÓDULO SCRCPY ---
+  startScrcpy: (deviceId: string): Promise<IpcResponse> =>
+    ipcRenderer.invoke(IpcChannels.SCRCPY_START, deviceId),
 
-    // Devolvemos una función para poder desuscribirse
-    return () => {
-      ipcRenderer.removeListener(channel, listener);
-    };
-  },
+  stopScrcpy: (deviceId: string): Promise<IpcResponse> =>
+    ipcRenderer.invoke(IpcChannels.SCRCPY_STOP, deviceId),
 
-  // Exponemos de forma segura el manejador de diálogo de archivos que hemos creado
+  // --- MÓDULO GESTIÓN DE APLICACIONES (APK / DEBLOAT) ---
+  installApk: (deviceId: string, apkPath: string): Promise<IpcResponse> =>
+    ipcRenderer.invoke(IpcChannels.APK_INSTALL, { deviceId, apkPath }),
+
+  listPackages: (
+    deviceId: string,
+    type: 'all' | 'system' | 'third-party',
+  ): Promise<IpcResponse<string[]>> =>
+    ipcRenderer.invoke(IpcChannels.APK_LIST_PACKAGES, { deviceId, type }),
+
+  uninstallSystemApp: (
+    deviceId: string,
+    packageName: string,
+  ): Promise<IpcResponse> =>
+    ipcRenderer.invoke(IpcChannels.APK_UNINSTALL_SYSTEM, {
+      deviceId,
+      packageName,
+    }),
+
+  // --- DIÁLOGO DE ARCHIVOS (De su versión anterior, conservado de forma segura) ---
   invokeFileDialog: () => ipcRenderer.invoke('open-file-dialog-for-apk'),
+
+  // --- LISTENERS EN TIEMPO REAL ---
+  onTelemetryUpdate: (callback: (data: DeviceTelemetry[]) => void) => {
+    ipcRenderer.on(IpcChannels.TELEMETRY_STREAM, (_event, data) =>
+      callback(data),
+    );
+  },
+
+  removeTelemetryListeners: () => {
+    ipcRenderer.removeAllListeners(IpcChannels.TELEMETRY_STREAM);
+  },
 };
 
-// Exponer el API al mundo del renderer de forma segura
-contextBridge.exposeInMainWorld('api', api);
+// Exponer la API al proceso visual (React) con el nombre exacto que usamos
+contextBridge.exposeInMainWorld('electronAPI', api);
 
-// Exponer los nombres de los canales para evitar errores de tipeo
-contextBridge.exposeInMainWorld('IpcChannel', IpcChannel);
-contextBridge.exposeInMainWorld('IpcEvent', IpcEvent);
-
-// TypeScript anota la existencia de `window.api`
+// Tipado estricto para que TypeScript no marque errores en React
 declare global {
   interface Window {
-    api: typeof api;
-    IpcChannel: typeof IpcChannel;
-    IpcEvent: typeof IpcEvent;
+    electronAPI: typeof api;
   }
 }

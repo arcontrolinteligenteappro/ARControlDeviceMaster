@@ -21,7 +21,7 @@ interface HomeAssistantConfig {
 interface IoTConfig {
   tuya: TuyaConfig;
   smartthings: SmartThingsConfig;
-  yeelight: {};
+  yeelight: Record<string, unknown>;
   homeassistant: HomeAssistantConfig;
 }
 

@@ -1,0 +1,41 @@
+/* src/renderer/src/components/NoDevices.module.css */
+.noDevicesContainer {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #22d3ee; /* cyan-400 */
+}
+
+.radarBase {
+  position: relative;
+  width: 208px;
+  height: 208px;
+  border: 1px solid #22d3ee;
+}
+
+.pingEffect {
+  position: absolute;
+  inset: 0;
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  border: 1px solid #22d3ee;
+}
+
+.radarInner {
+  position: absolute;
+  inset: 24px;
+  border: 1px solid #a855f7; /* purple-500 */
+}
+
+.scanningText {
+  margin-top: 24px;
+  font-size: 18px;
+  letter-spacing: 0.1em;
+}
+
+@keyframes ping {
+  75%, 100% { transform: scale(2); opacity: 0; }
+}

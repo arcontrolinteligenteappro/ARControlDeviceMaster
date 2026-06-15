@@ -1,0 +1,1 @@
+const { Adb } = require('@devicefarmer/adbkit'); const client = Adb.createClient(); client.listDevices().then(console.log).catch(console.error);

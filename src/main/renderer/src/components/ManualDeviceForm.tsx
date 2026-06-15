@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styles from './ManualDeviceForm.module.css';
 
 export default function ManualDeviceForm({ onUpdate }: any) {
   const [ip, setIp] = useState('');
@@ -10,30 +11,25 @@ export default function ManualDeviceForm({ onUpdate }: any) {
       return;
     }
 
-    const device = {
-      id: ip,
-      ip,
-      type,
-    };
-
+    const device = { id: ip, ip, type };
     const updated = await window.api.addDevice(device);
-
     onUpdate(updated);
-
     setIp('');
   };
 
   return (
-    <div className="border p-2 text-xs text-cyan-400">
-      <h3>Agregar dispositivo manual</h3>
+    <div className={styles.formContainer}>
+      <h3 className={styles.title}>Agregar dispositivo manual</h3>
 
       <input
+        className={styles.inputField}
         placeholder="IP (192.168.x.x)"
         value={ip}
         onChange={(e) => setIp(e.target.value)}
       />
 
       <select
+        className={styles.selectField}
         title="Tipo de dispositivo"
         value={type}
         onChange={(e) => setType(e.target.value)}
@@ -42,7 +38,9 @@ export default function ManualDeviceForm({ onUpdate }: any) {
         <option value="yeelight">Yeelight</option>
       </select>
 
-      <button onClick={handleAdd}>GUARDAR</button>
+      <button className={styles.saveButton} onClick={handleAdd}>
+        GUARDAR
+      </button>
     </div>
   );
 }

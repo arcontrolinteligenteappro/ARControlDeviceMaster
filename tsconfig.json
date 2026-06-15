@@ -11,13 +11,12 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "jest"],
     "allowJs": true,
-    "baseUrl": "./",
     "paths": {
-      "@/*": ["src/renderer/src/*"],
-      "@ipc/*": ["src/ipc/*"],
-      "@workers/*": ["src/main/workers/*"],
-      "@ui/*": ["src/renderer/src/components/ui/*"],
-      "@shared/*": ["src/shared/*"]
+      "@/*": ["./src/renderer/src/*"],
+      "@ipc/*": ["./src/ipc/*"],
+      "@workers/*": ["./src/main/workers/*"],
+      "@ui/*": ["./src/renderer/src/components/ui/*"],
+      "@shared/*": ["./src/shared/*"]
     }
   },
   "include": ["src"],

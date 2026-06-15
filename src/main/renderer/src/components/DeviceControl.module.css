@@ -1,0 +1,47 @@
+/* src/renderer/src/components/DeviceControl.module.css */
+.controlContainer {
+  border: 1px solid #00f2fe;
+  padding: 12px;
+  font-size: 12px;
+  color: #00f2fe;
+  background-color: #0a0a12;
+  font-family: monospace;
+}
+
+.title { margin: 0 0 10px 0; color: #fff; }
+
+.navGrid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.navRow { display: flex; gap: 5px; }
+
+.btn {
+  background: transparent;
+  border: 1px solid #00f2fe;
+  color: #00f2fe;
+  padding: 5px 10px;
+  cursor: pointer;
+  min-width: 40px;
+}
+
+.appGroup {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  background: #111;
+  border: 1px solid #9d4edd;
+  color: #9d4edd;
+  padding: 5px;
+  cursor: pointer;
+  margin-top: 5px;
+  width: 100%;
+}

@@ -1,0 +1,20 @@
+/* src/renderer/src/components/AppManagerPanel.module.css */
+.container { display: flex; flex-direction: column; height: 100%; gap: 20px; background-color: #05050a; color: #fff; font-family: monospace; }
+.header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #00f2fe; padding-bottom: 10px; }
+.title { margin: 0; color: #00f2fe; text-shadow: 0 0 10px rgba(0,242,254,0.3); }
+.deviceInfo { font-size: 11px; color: #aaa; }
+.backButton { background-color: transparent; border: 1px solid #aaa; color: #aaa; padding: 5px 15px; cursor: pointer; }
+.injectorWrapper { display: flex; gap: 20px; }
+.injectorSection { flex: 1; background-color: #0a0a12; padding: 15px; border: 1px solid #333; }
+.injectTitle { color: #00f2fe; margin: 0 0 10px 0; }
+.injectForm { display: flex; gap: 10px; }
+.inputPath { flex: 1; padding: 10px; background-color: #000; border: 1px solid #444; color: #00f2fe; outline: none; }
+.installBtn { background-color: #00f2fe; color: #000; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; }
+.statusBox { padding: 10px; background-color: #111; border-left: 3px solid #9d4edd; font-size: 11px; color: #9d4edd; }
+.pkgContainer { flex: 1; display: flex; flex-direction: column; border: 1px solid #333; background-color: #000; }
+.filterBar { padding: 8px; background-color: #111; border-bottom: 1px solid #333; display: flex; gap: 10px; }
+.pkgList { flex: 1; padding: 15px; overflow-y: auto; max-height: 300px; }
+.pkgItem { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #111; align-items: center; font-size: 13px; }
+.pkgLabel { color: #00ff00; }
+.purgeBtn { background-color: transparent; border: 1px solid #ff0055; color: #ff0055; font-size: 10px; padding: 2px 6px; cursor: pointer; }
+.loadingText { color: #444; }

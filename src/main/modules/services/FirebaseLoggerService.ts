@@ -7,6 +7,7 @@ class FirebaseLoggerService {
   constructor() {
     try {
       const serviceAccountPath = getResourcePath('firebase-credentials.json');
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const serviceAccount = require(serviceAccountPath);
 
       admin.initializeApp({

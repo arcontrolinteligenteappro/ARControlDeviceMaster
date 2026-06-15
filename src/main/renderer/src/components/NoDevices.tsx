@@ -1,18 +1,19 @@
 import React from 'react';
 import bg from '../assets/bg_sindispositivos.png';
+import styles from './NoDevices.module.css';
 
 export default function NoDevices() {
   return (
     <div
       style={{ backgroundImage: `url(${bg})` }}
-      className="h-screen bg-cover bg-center flex flex-col items-center justify-center text-cyan-400"
+      className={styles.noDevicesContainer}
     >
-      <div className="relative w-52 h-52 border border-cyan-400">
-        <div className="absolute inset-0 animate-ping border border-cyan-400"></div>
-        <div className="absolute inset-6 border border-purple-500"></div>
+      <div className={styles.radarBase}>
+        <div className={styles.pingEffect}></div>
+        <div className={styles.radarInner}></div>
       </div>
 
-      <p className="mt-6 text-lg tracking-widest">ESCANEANDO DISPOSITIVOS...</p>
+      <p className={styles.scanningText}>ESCANEANDO DISPOSITIVOS...</p>
     </div>
   );
 }

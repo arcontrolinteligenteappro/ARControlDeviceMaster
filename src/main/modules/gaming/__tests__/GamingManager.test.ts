@@ -31,17 +31,23 @@ describe('GamingManager', () => {
       await gamingManager.init();
     });
 
-    jest.spyOn(console, 'log').mockImplementation(() => {});
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
   it('should save a keymap profile correctly', async () => {
-    const profile = { name: 'test-profile', mappings: [{ key: 'a', x: 1, y: 2, type: 'tap' }] };
-    const result = await gamingManager.saveProfile(profile.name, profile.mappings);
+    const profile = {
+      name: 'test-profile',
+      mappings: [{ key: 'a', x: 1, y: 2, type: 'tap' }],
+    };
+    const result = await gamingManager.saveProfile(
+      profile.name,
+      profile.mappings,
+    );
     expect(result).toBe(true);
     expect(mockFs.writeFile).toHaveBeenCalledWith(
       path.join(profilesDir, 'test-profile.json'),
-      JSON.stringify(profile.mappings, null, 2)
+      JSON.stringify(profile.mappings, null, 2),
     );
   });
 

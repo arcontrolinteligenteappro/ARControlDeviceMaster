@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import styles from './FooterTyping.module.css';
 
 const TEXT = 'Elaborado Por ChrisRey91  /  www.arcontrolinteligente.com';
 
 export default function FooterTyping() {
   const [index, setIndex] = useState(0);
-  const [mode, setMode] = useState('write');
+  const [mode, setMode] = useState<'write' | 'delete'>('write');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,9 +33,5 @@ export default function FooterTyping() {
     return () => clearInterval(interval);
   }, [mode]);
 
-  return (
-    <div className="fixed bottom-0 w-full text-center py-2 border-t border-cyan-500 bg-black text-green-400 text-sm">
-      {TEXT.slice(0, index)}
-    </div>
-  );
+  return <div className={styles.footerContainer}>{TEXT.slice(0, index)}</div>;
 }

@@ -1,0 +1,55 @@
+/* src/renderer/src/components/TacticalGrid.module.css */
+.gridContainer {
+  width: 100%;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  background-color: #020205;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.deviceCard {
+  border: 1px solid #00f2fe;
+  padding: 15px;
+  background-color: #0a0a12;
+  border-radius: 8px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.modelName { color: #fff; margin: 0; }
+.deviceId { color: #9d4edd; fontSize: 10px; }
+
+.liveFeedPlaceholder {
+  height: 220px;
+  background-color: #000;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedText { color: #333; }
+
+.buttonGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.actionButton {
+  background: transparent;
+  padding: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btnCapture { border-color: #00f2fe; color: #00f2fe; }
+.btnShell { border-color: #9d4edd; color: #9d4edd; }
+.btnForensic { border-color: #ff0055; color: #ff0055; }

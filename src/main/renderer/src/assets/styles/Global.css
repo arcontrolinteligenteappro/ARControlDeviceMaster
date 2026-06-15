@@ -1,0 +1,8 @@
+/* src/renderer/src/assets/styles/global.css */
+.container-full { width: 100vw; min-height: 100vh; background-color: #05050a; color: #ffffff; padding: 30px; box-sizing: border-box; }
+.flex-space { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #9d4edd; padding-bottom: 15px; margin-bottom: 30px; }
+.text-cyan { color: #00f2fe; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
+.grid-devices { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+.card-base { background-color: #0a0a12; border: 1px solid #00f2fe; padding: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); }
+.text-white { color: #ffffff; }
+.btn-base { background: transparent; padding: 10px; cursor: pointer; font-weight: bold; }

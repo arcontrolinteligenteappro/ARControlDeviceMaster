@@ -18,7 +18,7 @@ export function startH264Stream(deviceId: string, win: any) {
     '--max-fps=60',
     '--no-window',
     '--no-control',
-    '--record=-'
+    '--record=-',
   ]);
 
   streams[deviceId] = proc;
@@ -26,7 +26,7 @@ export function startH264Stream(deviceId: string, win: any) {
   proc.stdout.on('data', (chunk) => {
     win.send('scrcpy:h264', {
       id: deviceId,
-      data: chunk.toString('base64')
+      data: chunk.toString('base64'),
     });
   });
 
